@@ -1,1 +1,3 @@
 conda install -c conda-forge pydicom
+conda install -c conda-forge tqdm
+
