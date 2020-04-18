@@ -27,7 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description='Show images.')
     parser.add_argument('relativePath',
                         type=str,
-                        default="data/preprocessed",
+                        default=os.path.join("data", "preprocessed"),
                         nargs='?',
                         help='Relative path to proprocessed data')
     args = parser.parse_args()
