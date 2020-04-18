@@ -49,24 +49,24 @@ def main():
     parser.add_argument('-p',
                         '--path',
                         type=str,
-                        default="data/preprocessed",
+                        default=os.path.join("data", "preprocessed"),
                         nargs='?',
                         help='Relative path to proprocessed data')
     parser.add_argument('-o',
                         '--output',
                         type=str,
-                        default="data/model",
+                        default=os.path.join("data", "model"),
                         nargs='?',
                         help='Output folder')
     parser.add_argument('-c',
                         '--cancer',
-                        default=4,
+                        default=4000,
                         type=int,
                         nargs='?',
                         help='Number of people with cancer')
     parser.add_argument('-nc',
                         '--not-cancer',
-                        default=4,
+                        default=4000,
                         type=int,
                         nargs='?',
                         help='Number of people without cancer')
