@@ -47,31 +47,40 @@ def showScan(filePath, width, height):
     result.show(title=filePath)
 
 
-parser = argparse.ArgumentParser(description='Show images.')
-parser.add_argument('relativePath', type=str, help='Relative file/folder path')
-parser.add_argument('-w',
-                    '--width',
-                    default=50,
-                    type=int,
-                    help='Width in inches.')
-parser.add_argument('-l',
-                    '--height',
-                    default=50,
-                    type=int,
-                    help='Height in inches.')
+def main():
+    parser = argparse.ArgumentParser(description='Show images.')
+    parser.add_argument('relativePath',
+                        type=str,
+                        help='Relative file/folder path')
+    parser.add_argument('-w',
+                        '--width',
+                        default=50,
+                        type=int,
+                        nargs='?',
+                        help='Width in inches.')
+    parser.add_argument('-hg',
+                        '--height',
+                        default=50,
+                        type=int,
+                        nargs='?',
+                        help='Height in inches.')
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-path = os.path.join(os.getcwd(), args.relativePath)
+    path = os.path.join(os.getcwd(), args.relativePath)
 
-if not os.path.exists(path):
-    print("File don't exists: {}".format(path))
-    exit()
+    if not os.path.exists(path):
+        print("File don't exists: {}".format(path))
+        exit()
 
-if path.endswith('npy'):
-    showNumpyArray(path, args.width, args.height)
-elif path.endswith('mhd'):
-    showScan(path, args.width, args.height)
-else:
-    print("Unknown file extension: {}".format(args.relativePath))
-    exit()
+    if path.endswith('npy'):
+        showNumpyArray(path, args.width, args.height)
+    elif path.endswith('mhd'):
+        showScan(path, args.width, args.height)
+    else:
+        print("Unknown file extension: {}".format(args.relativePath))
+        exit()
+
+
+if __name__ == "__main__":
+    main()
