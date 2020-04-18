@@ -21,3 +21,6 @@ dependencies:
   - simpleitk=1.2.4
   - statsmodels=0.11.0
   - tqdm=4.15.0
+  - pip:
+      - tensorflow==1.15
+      - tflearn==0.3.2

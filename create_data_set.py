@@ -4,7 +4,7 @@
 import os
 import random
 import argparse
-from utils import for_each_sample, isCancerSample
+from utils import for_each_sample, isCancerSample, TRAIN_DATA_FILE_NAME, TEST_DATA_FILE_NAME
 
 
 def get_all_samples(path):
@@ -109,8 +109,8 @@ def main():
 
     random.shuffle(train_data_set)
 
-    save(train_data_set, args.output, "train.txt")
-    save(test_data_set, args.output, "test.txt")
+    save(train_data_set, args.output, TRAIN_DATA_FILE_NAME)
+    save(test_data_set, args.output, TEST_DATA_FILE_NAME)
 
 
 if __name__ == "__main__":
