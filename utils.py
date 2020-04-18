@@ -1,5 +1,8 @@
 import os
 
+TRAIN_DATA_FILE_NAME = "train.txt"
+TEST_DATA_FILE_NAME = "test.txt"
+
 
 def for_each_sample(path, fn):
     '''

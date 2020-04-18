@@ -1,0 +1,2 @@
+model_checkpoint_path: "/Users/lukasz/studies/lung-cancer-detection/nodule3-classifier.tfl.ckpt-330"
+all_model_checkpoint_paths: "/Users/lukasz/studies/lung-cancer-detection/nodule3-classifier.tfl.ckpt-330"
