@@ -8,10 +8,9 @@ from keras.datasets import cifar10
 from keras import activations
 from keras.optimizers import Adadelta
 from keras import metrics
-import cv2
-from random import random
+import random 
 import numpy as np
-
+import scipy
 class CNN(object):
     def __init__(self, network=None):
         self.model = Sequential()
@@ -19,7 +18,10 @@ class CNN(object):
 
     def init_input_layer(self, X):
         def preprocessing_function(image):
-            return cv2.GaussianBlur(image, (5,5), random() * 5.0)
+            if bool(random.getrandbits(1)):
+                sigma = random.uniform(0., 5.0)
+                image = scipy.ndimage.filters.gaussian_filter(image, sigma)
+            return image
 
         self.datagen = ImageDataGenerator(
             featurewise_center=True,
@@ -29,7 +31,6 @@ class CNN(object):
         )
         self.datagen.fit(X)
         shape = (X.shape[1], X.shape[2], X.shape[3])
-        print(shape)
         self.model.add(InputLayer(input_shape=shape))
         pass
 
@@ -91,16 +92,15 @@ class CNN(object):
             loss="categorical_crossentropy",
             optimizer=Adadelta(),
             metrics=[metrics.Accuracy()])
-        
-        print(self.model.summary())
+    
 
     def train(self, X, Y, X_validate, Y_validate):
+        print(self.datagen.flow(X, Y, batch_size=96).y.shape)
         self.model.fit(
-            # self.datagen.flow(X, Y, batch_size=96),
-            X,Y,
+            self.datagen.flow(X, Y, batch_size=96),
             epochs=70,
             validation_data=(X_validate, Y_validate),
             shuffle=True,
-            verbose=2
+            verbose=1
 
         )

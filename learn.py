@@ -39,14 +39,13 @@ def get_data_from_file(path):
 X, Y = get_data_from_file(os.path.join(DATA_PATH, TRAIN_DATA_FILE_NAME))
 X_test, Y_text = get_data_from_file(
     os.path.join(DATA_PATH, TEST_DATA_FILE_NAME))
-print(Y[0].shape)
 
 cnn = CNN()
 cnn.define_network(X)
 cnn.train(X, Y, X_test, Y_text)
 
-convnet = CNNModel()
-network = convnet.define_network(X)
+# convnet = CNNModel()
+# network = convnet.define_network(X)
 # model = tflearn.DNN(network,
 #                     tensorboard_verbose=0,
 #                     checkpoint_path=os.path.join(MODEL_OUTPUT,
