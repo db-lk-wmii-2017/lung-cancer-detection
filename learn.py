@@ -4,6 +4,8 @@
 import os
 import numpy as np
 from cnn_model import CNNModel
+from cnn_model_keres import CNN
+
 from utils import TRAIN_DATA_FILE_NAME, TEST_DATA_FILE_NAME
 import tflearn
 
@@ -37,21 +39,26 @@ def get_data_from_file(path):
 X, Y = get_data_from_file(os.path.join(DATA_PATH, TRAIN_DATA_FILE_NAME))
 X_test, Y_text = get_data_from_file(
     os.path.join(DATA_PATH, TEST_DATA_FILE_NAME))
+print(Y[0].shape)
+
+cnn = CNN()
+cnn.define_network(X)
+cnn.train(X, Y, X_test, Y_text)
 
 convnet = CNNModel()
 network = convnet.define_network(X)
-model = tflearn.DNN(network,
-                    tensorboard_verbose=0,
-                    checkpoint_path=os.path.join(MODEL_OUTPUT,
-                                                 CLASSIFIER_NAME))
-model.fit(X,
-          Y,
-          n_epoch=70,
-          shuffle=True,
-          validation_set=(X_test, Y_text),
-          show_metric=True,
-          batch_size=96,
-          snapshot_epoch=True,
-          run_id=VERSION)
-model.save(os.path.join(MODEL_OUTPUT, CLASSIFIER_NAME))
-print("Network trained and saved as {}".format(CLASSIFIER_NAME))
+# model = tflearn.DNN(network,
+#                     tensorboard_verbose=0,
+#                     checkpoint_path=os.path.join(MODEL_OUTPUT,
+#                                                  CLASSIFIER_NAME))
+# model.fit(X,
+#           Y,
+#           n_epoch=70,
+#           shuffle=True,
+#           validation_set=(X_test, Y_text),
+#           show_metric=True,
+#           batch_size=96,
+#           snapshot_epoch=True,
+#           run_id=VERSION)
+# model.save(os.path.join(MODEL_OUTPUT, CLASSIFIER_NAME))
+# print("Network trained and saved as {}".format(CLASSIFIER_NAME))
