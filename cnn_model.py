@@ -130,6 +130,15 @@ class CNNModel(object):
         self.network = regression(self.network, optimizer = 'adam',\
          loss = 'categorical_crossentropy', learning_rate = 0.001)
 
+        print(inp_layer)
+        print(conv_layer_1)
+        print(mp_layer_1)
+        print(conv_layer_3)
+        print(conv_layer_3)
+        print(mp_layer_2)
+        print(fully_connected_layer_1)
+        print(dropout_layer_1)
+        print(softmax_layer)
         if mode == 'testtrain':
             return self.network
         if mode == 'visual':
