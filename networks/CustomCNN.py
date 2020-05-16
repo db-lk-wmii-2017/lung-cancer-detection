@@ -119,7 +119,7 @@ class CustomCNN(object):
         Y,
         X_validate,
         Y_validate,
-        epochs=140,
+        epochs=250,
         verbose=0,
         log_dir="logs",
         checkpoint="checkpoint",

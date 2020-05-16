@@ -19,6 +19,9 @@ from utils import load_data
 DATA_PATH = os.path.join("data", "model")
 MODEL_OUTPUT = os.path.join("data", "model")
 
+if not os.path.exists(MODEL_OUTPUT):
+    os.makedirs(MODEL_OUTPUT)
+
 
 def define_output_redirecter():
     orig_stdout = sys.stdout
@@ -61,7 +64,7 @@ for type in (NetworkType.BINARY, NetworkType.CATEGORICAL):
     model_name = "CustomCNN-{}".format(type.name)
     redirect_output(os.path.join(MODEL_OUTPUT, model_name + ".log"))
     print("=== Starting {} ===".format(model_name))
-
+    sys.stdout.flush()
     X, Y, X_test, Y_text = load_data(
         DATA_PATH,
         labels_as_categories=True if NetworkType.CATEGORICAL == type else False,
@@ -89,6 +92,7 @@ for type in (NetworkType.BINARY, NetworkType.CATEGORICAL):
         )
     )
     print()
+    sys.stdout.flush()
 
     cnn = CustomCNN(model_type=type)
     cnn.define_network(X)
@@ -118,5 +122,6 @@ for type in (NetworkType.BINARY, NetworkType.CATEGORICAL):
         path=os.path.join(MODEL_OUTPUT, "{}-history.png".format(model_name)),
     )
     plt.close()
+    sys.stdout.flush()
 
 restore_output()
