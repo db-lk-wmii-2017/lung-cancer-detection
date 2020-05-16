@@ -28,3 +28,4 @@ dependencies:
   - pip:
       - tensorflow==2.2
       - plot-keras-history==1.1.23
+      - tensorboard=2.2

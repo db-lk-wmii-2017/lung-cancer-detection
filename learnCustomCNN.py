@@ -105,6 +105,9 @@ for type in (NetworkType.BINARY, NetworkType.CATEGORICAL):
     )
     model.save(os.path.join(MODEL_OUTPUT, model_name + ".model"))
     print("Network trained and saved as {}.model".format(model_name))
+    model_json = model.to_json()
+    with open(os.path.join(MODEL_OUTPUT, model_name + ".json"), "w") as json_file:
+        json_file.write(model_json)
     plot_model(
         model,
         to_file=os.path.join(MODEL_OUTPUT, "{}-graph.png".format(model_name)),
