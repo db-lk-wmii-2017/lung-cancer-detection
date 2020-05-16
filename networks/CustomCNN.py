@@ -16,17 +16,24 @@ from keras.datasets import cifar10
 from keras import activations
 from keras.optimizers import Adadelta
 from keras import metrics
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard, EarlyStopping, ModelCheckpoint
 from keras.optimizers import Adam
 import random
 import numpy as np
 import scipy
 import os
 from preprocess import apply_gaussian_filter
+from enum import Enum
+
+
+class NetworkType(Enum):
+    CATEGORICAL = 0
+    BINARY = 1
 
 
 class CustomCNN(object):
-    def __init__(self):
+    def __init__(self, model_type: NetworkType = NetworkType.CATEGORICAL):
+        self.model_type = model_type
         self.model = Sequential()
         self.datagen = None
         self.validgen = None
@@ -39,6 +46,7 @@ class CustomCNN(object):
         activation=activations.relu,
         regularizer=regularizers.l2(),
         padding="same",
+        **kwargs,
     ):
         return Conv2D(
             filters,
@@ -48,6 +56,7 @@ class CustomCNN(object):
             kernel_regularizer=regularizer,
             bias_regularizer=regularizer,
             padding=padding,
+            **kwargs,
         )
 
     def create_mp_layer(self, name, pool_size=(2, 2), padding="same"):
@@ -70,10 +79,22 @@ class CustomCNN(object):
         self.validgen.fit(X)
 
     def define_network(self, X, optimizer=Adam(learning_rate=0.0001)):
+        last_layer = None
+        loss_function = None
+        if NetworkType.CATEGORICAL == self.model_type:
+            last_layer = Dense(2, activation=activations.softmax, name="dense2")
+            loss_function = "categorical_crossentropy"
+        elif NetworkType.BINARY == self.model_type:
+            last_layer = Dense(1, activation=activations.sigmoid, name="dense2")
+            loss_function = "binary_crossentropy"
+        else:
+            raise Exception("Invalid model_type")
+
         self.init_data_generator(X)
         layers = (
-            InputLayer(name="input", input_shape=(X.shape[1], X.shape[2], X.shape[3])),
-            self.create_conv_layer("conv_1_32", 32),
+            self.create_conv_layer(
+                "conv_1_32", 32, input_shape=(X.shape[1], X.shape[2], X.shape[3])
+            ),
             self.create_mp_layer("mp1"),
             self.create_conv_layer("conv_2_64", 64),
             self.create_conv_layer("conv_3_64", 64, kernel_size=(3, 3)),
@@ -81,14 +102,14 @@ class CustomCNN(object):
             Flatten(),
             Dense(512, activation=activations.relu, name="dense1"),
             Dropout(0.5, name="dp1"),
-            Dense(2, activation=activations.softmax, name="dense2"),
+            last_layer,
         )
 
         for layer in layers:
             self.model.add(layer)
 
         self.model.compile(
-            loss="categorical_crossentropy", optimizer=optimizer, metrics=["accuracy"],
+            loss=loss_function, optimizer=optimizer, metrics=["accuracy"],
         )
 
     def train(
@@ -99,22 +120,35 @@ class CustomCNN(object):
         X_validate,
         Y_validate,
         epochs=140,
-        verbose=1,
+        verbose=0,
         log_dir="logs",
+        checkpoint="checkpoint",
     ):
-        self.model.fit(
+        callbacks = [
+            ModelCheckpoint(
+                filepath=os.path.join(model_dir, checkpoint),
+                monitor="val_loss",
+                mode="min",
+                save_best_only=True,
+                verbose=0,
+            ),
+            EarlyStopping(monitor="val_loss", verbose=1, mode="min", patience=30,),
+            TensorBoard(
+                log_dir=os.path.join(model_dir, log_dir),
+                write_graph=True,
+                write_images=False,
+                histogram_freq=0,
+            ),
+        ]
+        history = self.model.fit(
             self.datagen.flow(X, Y, batch_size=96),
             epochs=epochs,
             validation_data=self.validgen.flow(X_validate, Y_validate),
             shuffle=True,
             verbose=verbose,
-            callbacks=[
-                TensorBoard(
-                    log_dir=os.path.join(model_dir, log_dir),
-                    write_graph=True,
-                    write_images=False,
-                    histogram_freq=0,
-                )
-            ],
+            callbacks=callbacks,
         )
-        return self.model
+        return self.model, history
+
+    def summary(self):
+        self.model.summary()
