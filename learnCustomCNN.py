@@ -14,34 +14,14 @@ from plot_keras_history import plot_history
 import matplotlib.pyplot as plt
 from tensorflow import keras
 from keras.utils.vis_utils import plot_model
-from utils import load_data
+from utils import load_data, define_output_redirecter
+
 
 DATA_PATH = os.path.join("data", "model")
 MODEL_OUTPUT = os.path.join("data", "model")
 
 if not os.path.exists(MODEL_OUTPUT):
     os.makedirs(MODEL_OUTPUT)
-
-
-def define_output_redirecter():
-    orig_stdout = sys.stdout
-    f = None
-
-    def redirect(file):
-        try:
-            if f != None:
-                f.close()
-        except:
-            pass
-        f = open(file, "w")
-        sys.stdout = f
-
-    def restore():
-        sys.stdout = orig_stdout
-        if f != None:
-            f.close()
-
-    return redirect, restore
 
 
 def define_cancer_counter(type):

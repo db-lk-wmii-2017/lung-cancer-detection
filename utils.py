@@ -1,8 +1,30 @@
 import os
 import numpy as np
+import sys
 
 TRAIN_DATA_FILE_NAME = "train.txt"
 TEST_DATA_FILE_NAME = "test.txt"
+
+
+def define_output_redirecter():
+    orig_stdout = sys.stdout
+    f = None
+
+    def redirect(file):
+        try:
+            if f != None:
+                f.close()
+        except:
+            pass
+        f = open(file, "w")
+        sys.stdout = f
+
+    def restore():
+        sys.stdout = orig_stdout
+        if f != None:
+            f.close()
+
+    return redirect, restore
 
 
 def for_each_sample(path, fn):
