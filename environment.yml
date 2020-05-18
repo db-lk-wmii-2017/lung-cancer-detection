@@ -29,3 +29,4 @@ dependencies:
       - tensorflow==2.2
       - plot-keras-history==1.1.23
       - tensorboard==2.2
+      - keras-efficientnets==0.1.7

@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import sys
+import cv2
 
 TRAIN_DATA_FILE_NAME = "train.txt"
 TEST_DATA_FILE_NAME = "test.txt"
@@ -60,19 +61,23 @@ def save_to_csv_file(collection, path, file_name):
             f.write("{} {}\n".format(line, label))
 
 
-def load_data(path, labels_as_categories=True):
+def load_data(path, labels_as_categories=True, channels=1):
     X, Y = get_data_from_csv_file(
         os.path.join(path, TRAIN_DATA_FILE_NAME),
         labels_as_categories=labels_as_categories,
+        channels=channels,
     )
     X_test, Y_text = get_data_from_csv_file(
         os.path.join(path, TEST_DATA_FILE_NAME),
         labels_as_categories=labels_as_categories,
+        channels=channels,
     )
     return X, Y, X_test, Y_text
 
 
-def get_data_from_csv_file(path, show_error=False, labels_as_categories=True):
+def get_data_from_csv_file(
+    path, show_error=False, labels_as_categories=True, channels=1
+):
     data = []
     labels = []
     with open(path) as file:
@@ -84,7 +89,13 @@ def get_data_from_csv_file(path, show_error=False, labels_as_categories=True):
             sample_path, label = line.split(" ")
             array = np.load(sample_path)
             if array.shape == (50, 50):
-                data.append(array)
+                if channels == 1:
+                    data.append(array)
+                elif channels == 3:
+                    data.append(cv2.merge((array, array, array)))
+                else:
+                    raise Exception("Invalid channels number.")
+
                 if labels_as_categories:
                     labels.append([0.0, 1.0] if int(label) else [1.0, 0.0])
                 else:
@@ -92,6 +103,6 @@ def get_data_from_csv_file(path, show_error=False, labels_as_categories=True):
             elif show_error:
                 print("Shape error: {}".format(sample_path))
     return (
-        np.asarray(data, dtype="f").reshape([-1, 50, 50, 1]),
+        np.asarray(data, dtype="f").reshape([-1, 50, 50, channels]),
         np.asarray(labels, dtype="f"),
     )
