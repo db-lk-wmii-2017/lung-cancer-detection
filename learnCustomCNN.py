@@ -45,7 +45,7 @@ for type in (NetworkType.BINARY, NetworkType.CATEGORICAL):
     redirect_output(os.path.join(MODEL_OUTPUT, model_name + ".log"))
     print("=== Starting {} ===".format(model_name))
     sys.stdout.flush()
-    X, Y, X_test, Y_text = load_data(
+    X, Y, X_test, Y_test = load_data(
         DATA_PATH,
         labels_as_categories=True if NetworkType.CATEGORICAL == type else False,
     )
@@ -83,7 +83,7 @@ for type in (NetworkType.BINARY, NetworkType.CATEGORICAL):
         X,
         Y,
         X_test,
-        Y_text,
+        Y_test,
         log_dir="{}-logs".format(model_name),
         checkpoint="{}.checkpoint".format(model_name),
     )
